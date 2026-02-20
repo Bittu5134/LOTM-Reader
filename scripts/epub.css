@@ -350,6 +350,11 @@ h6 {
   page-break-after: avoid;
   page-break-inside: avoid;
 }
+h4,
+h5,
+h6 {
+  border-bottom: none;
+}
 
 p {
   widows: 2;

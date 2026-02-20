@@ -1,0 +1,65 @@
+name: EPUB Release Builder
+
+on:
+  schedule:
+    # Run at 00:00 UTC on the 1st and 15th of every month
+    - cron: '0 0 1,15 * *'
+  workflow_dispatch:
+    # Allow manual trigger via GitHub UI
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    permissions:
+      contents: write # Required to create releases
+
+    steps:
+      # 1. Check out the code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # 3. Install Python libraries used in your scripts
+      - name: Install Python dependencies
+        run: |
+          pip install python-frontmatter pyyaml
+
+      # 4. Install Pandoc (Required for epub conversion)
+      - name: Install Pandoc
+        run: choco install pandoc --no-progress
+
+      # 5. Install ImageMagick (Required for 'magick' command)
+      - name: Install ImageMagick
+        run: choco install imagemagick --no-progress
+
+      # 6. Run your Image Manipulator Script
+      #    This creates ./images_default and ./images_legacy
+      - name: Process Images
+        run: python scripts/image.py
+
+      # 7. Run your EPUB Builder Script
+      #    This reads the processed images and creates .epub files in ./epub
+      - name: Build EPUBs
+        run: python scripts/epub.py
+
+      # 8. Generate a unique tag for the release (e.g., v2024.03.15)
+      - name: Generate Release Tag
+        id: tag
+        shell: bash
+        run: echo "date=$(date +'%Y.%m.%d')" >> $GITHUB_OUTPUT
+
+      # 9. Create GitHub Release and Upload Assets
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.tag.outputs.date }}
+          name: Release ${{ steps.tag.outputs.date }}
+          draft: false
+          prerelease: false
+          files: |
+            epub/*.epub

@@ -59,14 +59,14 @@
     </div>
     <div class="tooltip tooltip-left" data-tip="Contribute">
       <a
-        href="https://github.com/Bittu5134/LOTM-Reader/tree/CONTRIBUTE"
+        href="https://github.com/Bittu5134/ORV-Reader/blob/main/contributing.md"
         class="btn btn-soft btn-lg btn-warning"
         ><Icon icon="ri:edit-line" class="size-7" /></a
       >
     </div>
     <div class="tooltip tooltip-left" data-tip="Discord">
       <a
-        href="https://discord.gg/CZdNvKaNNr  "
+        href="https://discord.gg/XmzJVsyuTQ"
         class="btn btn-soft btn-lg btn-accent"
         ><Icon icon="mingcute:discord-line" class="size-7" /></a
       >

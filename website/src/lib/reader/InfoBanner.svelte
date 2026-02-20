@@ -78,7 +78,7 @@ $effect(() => {
       </p>
     </div>
     <a
-      href="https://discord.gg/CZdNvKaNNr"
+      href="https://discord.gg/XmzJVsyuTQ"
       target="_blank"
       rel="noopener noreferrer"
       class="btn btn-sm bg-[#5865F2] hover:bg-[#4752C4] text-white border-0 min-w-30"

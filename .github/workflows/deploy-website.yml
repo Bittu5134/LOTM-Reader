@@ -1,0 +1,79 @@
+name: Deploy Website to Cloudflare
+
+on:
+  schedule:
+    # Run at 00:00 UTC on the 1st and 15th of every month
+    - cron: '0 0 1,15 * *'
+  workflow_dispatch:
+    # Allow manual trigger via GitHub UI
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      # 1. Checkout Code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # 3. Install Python Dependencies
+      - name: Install Python dependencies
+        run: |
+          pip install python-frontmatter
+
+      # 4. Install Pandoc (Required by html.py)
+      - name: Install ImageMagick
+        run: choco install pandoc --no-progress
+
+      # 6. Copy Images to SvelteKit Lib Folder
+      #    Copies from /images to /website/src/lib/images so components can import them
+      - name: Move Images to Lib
+        run: |
+          if not exist "website\src\lib\images" mkdir "website\src\lib\images"
+          xcopy /E /I /Y images website\src\lib\images
+
+      # 7. Run HTML Builder Script
+      #    This generates +page.svelte files and meta.json
+      - name: Generate Svelte Pages
+        run: python scripts/html.py
+
+      # 8. Setup Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: website/package-lock.json
+
+      # 9. Install NPM Dependencies
+      - name: Install Node dependencies
+        working-directory: ./website
+        run: npm ci
+
+      # 10. Build SvelteKit Site
+      #     Includes NODE_OPTIONS memory fix to prevent crashing on thousands of pages
+      - name: Build Website
+        working-directory: ./website
+        env:
+          NODE_OPTIONS: "--max-old-space-size=7000"
+        run: npm run build
+
+      # 11. Deploy to Cloudflare Pages
+      #     Deploys the 'website/build' folder (Standard output for adapter-static)
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: beyonder  # <--- REPLACE THIS WITH YOUR CLOUDFLARE PROJECT NAME
+          directory: website/build
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

@@ -1,30 +1,27 @@
-import { mdsvex } from "mdsvex";
-import remarkGfm from "remark-gfm";
-import rehypeExternalLinks from "rehype-external-links"
-
 import adapter from "@sveltejs/adapter-static";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-  extensions: [".svelte", ".md", ".svx"],
+  extensions: [".svelte"],
   preprocess: [
-    mdsvex({
-      extensions: [".md", ".svx"],
-      remarkPlugins: [remarkGfm],
-      rehypePlugins: [rehypeExternalLinks],
-      smartypants: true,
-    }),
     vitePreprocess(),
   ],
   kit: {
     adapter: adapter({
       pages: "build",
       assets: "build",
-      fallback: undefined,
+      fallback: "404.html",
       precompress: true,
       strict: true,
     }),
+
+    prerender: {
+      concurrency: 5,
+      crawl: true,
+      handleHttpError: "warn",
+    },
+
     alias: {
       $lib: "./src/lib",
     },

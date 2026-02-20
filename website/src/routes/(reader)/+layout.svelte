@@ -30,6 +30,7 @@
       indent: false,
       navbarVisible: true,
       navbarSticky: true,
+      showComments: true,
       showBottomBanner: true,
       solidBackground: true,
     });
@@ -66,6 +67,7 @@
           indent: false,
           navbarVisible: true,
           navbarSticky: true,
+          showComments: true,
           showBottomBanner: true,
           solidBackground: true,
         };
@@ -132,7 +134,7 @@
   const totalChapters = $derived(
     bookData[bookSlug][currentTL].length
   );
-  console.log(totalChapters)
+
 
   let navState = $state({ searchQuery: "", selectedTL: "webnovel" });
 
@@ -297,6 +299,7 @@
     <InfoBanner />
   {/if}
 
+  {#if prefs.config.showComments}
   <div id="comments" class="sm:mx-auto mx-0 max-w-5xl sm:px-6 px-3 pb-6 scroll-mt-20">
     <Giscus
       id="comments"
@@ -316,6 +319,7 @@
       loading="lazy"
     />
   </div>
+  {/if}
 </div>
 
 <style>

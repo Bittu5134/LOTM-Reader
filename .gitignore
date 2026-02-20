@@ -4,6 +4,7 @@ images_default
 images_legacy
 misc/_misc
 misc/_misc2
+misc/discussions1.py
 website/src/routes/(reader)/read/lotm/webnovel
 website/src/routes/(reader)/read/lotm/oldtl
 website/src/routes/(reader)/read/coi/webnovel
@@ -150,3 +151,5 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+misc/discussions.py
+misc/discussions.py

@@ -10,6 +10,7 @@ paths = [
     "./chapters/lotm/oldtl/",
     "./chapters/coi/webnovel/",
 ]
+os.makedirs("./epub", exist_ok=True)
 today = datetime.date.today().strftime("%B %d, %Y")
 
 for path in paths:
@@ -38,7 +39,13 @@ for path in paths:
         content = ""
         for chapter in chapters[section]:
             chapter = chapter["content"].strip()
-            content += f"{chapter}\n\n___\n\n"
+            content += f"""{chapter}
+
+___
+- [Read Comments](https://github.com/Bittu5134/LOTM-Reader/discussions/{metadata["discussion"]})
+- [Discord](https://discord.gg/XmzJVsyuTQ)
+
+"""
 
         bookTitle = masterMD["title"][0]["text"]
         bookID = masterMD["metaBook"]

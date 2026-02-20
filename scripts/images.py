@@ -1,6 +1,5 @@
 import os
 import logging
-import shutil
 import subprocess
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import datetime
@@ -9,35 +8,32 @@ from datetime import datetime
 # CONFIGURATION
 # ============================================================
 SOURCE_DIR = "./images"
-WEB_LIB_DIR = "website/src/lib/images"
 WEBP_DIR = "./images_default"
 JPEG_DIR = "./images_legacy"
 
 # Simplified logging: only print to console in real-time
 logging.basicConfig(
     level=logging.INFO,
-    format="%(message)s",  # Clean output without timestamps for readability
+    format="%(message)s",
     handlers=[logging.StreamHandler()],
 )
 
 
 def process_image_suite(paths):
-    """Processes a single image and returns a status string."""
+    """Processes a single image: Converts to WebP and B&W JPEG."""
     input_path, relative_path = paths
     filename = os.path.basename(input_path)
 
-    web_lib_path = os.path.join(WEB_LIB_DIR, relative_path)
+    # Define paths for the converted versions
     webp_path = os.path.join(WEBP_DIR, os.path.splitext(relative_path)[0] + ".webp")
     jpeg_path = os.path.join(JPEG_DIR, os.path.splitext(relative_path)[0] + ".jpg")
 
-    for p in [web_lib_path, webp_path, jpeg_path]:
+    # Ensure directories exist
+    for p in [webp_path, jpeg_path]:
         os.makedirs(os.path.dirname(p), exist_ok=True)
 
     try:
-        # 1. Copy Original
-        shutil.copy2(input_path, web_lib_path)
-
-        # 2. WebP Conversion
+        # 1. WebP Conversion (High Quality, Color)
         cmd_webp = [
             "magick",
             input_path,
@@ -54,7 +50,7 @@ def process_image_suite(paths):
         ]
         subprocess.run(cmd_webp, check=True, capture_output=True)
 
-        # 3. JPEG B&W Conversion
+        # 2. JPEG B&W Conversion (Smaller, Grayscale)
         cmd_jpeg = [
             "magick",
             input_path,
@@ -79,7 +75,6 @@ def process_image_suite(paths):
 def run_pipeline():
     valid_exts = (".jpg", ".jpeg", ".png", ".tiff", ".webp")
     tasks = []
-    shutil.rmtree(WEB_LIB_DIR)
 
     if not os.path.exists(SOURCE_DIR):
         print(f"Source directory {SOURCE_DIR} not found.")
@@ -108,7 +103,7 @@ def run_pipeline():
 
         for future in as_completed(future_to_image):
             result = future.result()
-            logging.info(result)  # This prints immediately when the file is done
+            logging.info(result)
 
     print(f"\n--- All Tasks Complete at {datetime.now().strftime('%H:%M:%S')} ---")
 

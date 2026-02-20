@@ -55,9 +55,7 @@
     "dim",
     "nord",
   ];
-  const MISC_THEMES = ALL_THEMES.filter(
-    (t) => !PRIORITY_THEMES.includes(t),
-  );
+  const MISC_THEMES = ALL_THEMES.filter((t) => !PRIORITY_THEMES.includes(t));
 
   // --- Constants: Fonts ---
   const BOOK_FONTS = [
@@ -96,9 +94,9 @@
 
   function toggleFullscreen() {
     if (!document.fullscreenElement) {
-      modals.chapter?.close()
-      modals.settings?.close()
-      modals.edit?.close()
+      modals.chapter?.close();
+      modals.settings?.close();
+      modals.edit?.close();
       document.documentElement.requestFullscreen().catch(console.error);
     } else {
       document.exitFullscreen();
@@ -429,6 +427,16 @@
               <span class="label-text">Info Banner</span>
             </label>
           </div>
+          <div class="form-control">
+            <label class="label cursor-pointer justify-start gap-3">
+              <input
+                type="checkbox"
+                class="toggle toggle-sm toggle-accent"
+                bind:checked={prefs.config.showComments}
+              />
+              <span class="label-text">Show Comments</span>
+            </label>
+          </div>
         </div>
       </div>
     </div>
@@ -446,18 +454,20 @@
     <h3 class="font-bold text-lg mb-4 text-primary">Contribute</h3>
     <div class="flex flex-col gap-3">
       <a
-        href="https://github.com/Bittu5134/LOTM-Reader"
+        href="https://github.com/Bittu5134/LOTM-Reader/blob/main/contributing.md"
         target="_blank"
         class="btn btn-outline btn-primary w-full rounded-btn"
       >
         <Icon icon="mdi:book-open-page-variant" class="size-5 mr-2" /> Read Guide
       </a>
       <a
-        href="https://github.com/Bittu5134/LOTM-Reader/tree/main/src/lib/data"
+        href="https://github.com/Bittu5134/LOTM-Reader/blob/main/chapters/{bookSlug}/{navState.selectedTL}/{readerState.ch_meta.slug
+          .toString()
+          .padStart(4, '0')}.md"
         target="_blank"
         class="btn btn-secondary w-full rounded-btn"
       >
-        <Icon icon="mdi:github" class="size-5 mr-2" /> Repository
+        <Icon icon="mdi:github" class="size-5 mr-2" /> Edit this chapter on Github
       </a>
     </div>
   </div>
