@@ -31,14 +31,13 @@ jobs:
           pip install python-frontmatter
 
       # 4. Install Pandoc (Required by html.py)
-      - name: Install ImageMagick
+      - name: Install Pandoc
         run: choco install pandoc --no-progress
 
       # 6. Copy Images to SvelteKit Lib Folder
       #    Copies from /images to /website/src/lib/images so components can import them
       - name: Move Images to Lib
         run: |
-          if not exist "website\src\lib\images" mkdir "website\src\lib\images"
           xcopy /E /I /Y images website\src\lib\images
 
       # 7. Run HTML Builder Script
