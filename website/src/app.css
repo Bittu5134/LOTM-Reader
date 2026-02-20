@@ -1,0 +1,119 @@
+@import "tailwindcss";
+@import "littlefoot/dist/littlefoot.css";
+@plugin "@tailwindcss/typography";
+@plugin "daisyui" {
+  themes: all;
+}
+
+
+body {
+  font-family: 'Alegreya';
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- EB Garamond --- */
+@font-face {
+  font-family: "EB Garamond";
+  src:
+    local("EB Garamond Regular"),
+    local("EBGaramond-Regular"),
+    local("EB Garamond"),
+    url("/fonts/EBGaramond-Variable.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "EB Garamond";
+  src: url("/fonts/EBGaramond-Italic-Variable.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* --- Crimson Pro --- */
+@font-face {
+  font-family: "Crimson Pro";
+  src:
+    local("Crimson Pro"),
+    local("CrimsonPro-Regular"),
+    url("/fonts/CrimsonPro-Variable.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Crimson Pro";
+  src: url("/fonts/CrimsonPro-Italic-Variable.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* --- Alegreya --- */
+@font-face {
+  font-family: "Alegreya";
+  src:
+    local("Alegreya"),
+    local("Alegreya-Regular"),
+    url("/fonts/Alegreya-Variable.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Alegreya";
+  src: url("/fonts/Alegreya-Italic-Variable.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* --- Bookerly --- */
+
+/* Regular (Weight 400) */
+@font-face {
+  font-family: "Bookerly";
+  src: 
+    local("Bookerly"),
+    local("Bookerly Regular"),
+    url("/fonts/Bookerly.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Italic (Weight 400) */
+@font-face {
+  font-family: "Bookerly";
+  src: 
+    local("Bookerly Italic"),
+    url("/fonts/Bookerly-Italic.woff") format("woff");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Bold (Weight 700) */
+@font-face {
+  font-family: "Bookerly";
+  src: 
+    local("Bookerly Bold"),
+    url("/fonts/Bookerly-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Bold Italic (Weight 700) */
+@font-face {
+  font-family: "Bookerly";
+  src: 
+    local("Bookerly Bold Italic"),
+    url("/fonts/Bookerly-BoldItalic.woff") format("woff");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
