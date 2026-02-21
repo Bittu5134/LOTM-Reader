@@ -42,7 +42,7 @@ jobs:
       # 6. Run your Image Manipulator Script
       #    This creates ./images_default and ./images_legacy
       - name: Process Images
-        run: python scripts/epub_images.py
+        run: python scripts/images_epub.py
 
       # 7. Run your EPUB Builder Script
       #    This reads the processed images and creates .epub files in ./epub
