@@ -206,7 +206,7 @@ async def main():
         files = [f for f in os.listdir(path) if f.endswith(".md") and f != "0000.md"]
         gh_log(f"Found {len(files)} chapters for {bookID} ({bookTL})")
 
-        for file in files:
+        for file in files[:30]:
             post = frontmatter.load(os.path.join(path, file))
             slug = post.metadata.get("slug")
     
