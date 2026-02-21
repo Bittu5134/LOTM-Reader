@@ -42,3 +42,23 @@ h3::after {
   background-color: currentColor;
   border-radius: 2px;
 }
+
+hr {
+  border: none;
+  border-top: 0.1em solid currentColor;
+  overflow: visible;
+  text-align: center;
+  height: 0;
+  margin: 2rem 0;
+}
+
+hr::after {
+  content: "✟";
+  display: inline-block;
+  position: relative;
+  top: -1em;
+  padding: 0 10px;
+  background: var(--color-base-200);
+  border-radius: 1em;
+  font-size: 1.5rem;
+}

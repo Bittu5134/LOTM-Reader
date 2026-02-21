@@ -1,2 +1,17 @@
+/_app/immutable/*
+  Cache-Control: public, max-age=31536000, immutable
+
 /assets/*
-  Cache-Control: public, max-age=31536000, s-max-age=31536000, immutable
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/read/*
+  Cache-Control: public, max-age=7200, s-maxage=7200, stale-while-revalidate=7200, proxy-revalidate
+
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
