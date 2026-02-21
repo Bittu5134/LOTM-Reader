@@ -8,7 +8,7 @@
 📥: [Download EPUBs](https://beyonder.pages.dev/download/) \
 ⭐: Don't forget to star this repository!
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Bittu5134/LOTM-Reader/deploy-website.yml?branch=main&style=flat-square)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Bittu5134/LOTM-Reader/deploy-website.yml?branch=main&style=flat-square)](https://img.shields.io/github/actions/workflow/status/bittu5134/lotm-reader/deploy-website.yml?style=flat-square)
 ![GitHub Discussions](https://img.shields.io/github/discussions/Bittu5134/LOTM-Reader?style=flat-square)
 ![GitHub Repo stars](https://img.shields.io/github/stars/Bittu5134/LOTM-Reader?style=flat-square)
 
@@ -20,7 +20,6 @@
 
 ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2FBittu5134%2FLOTM-Reader%2Fraw%2Frefs%2Fheads%2Fmain%2Fwebsite%2Fsrc%2Flib%2Fmeta.json&query=%24.lotm.webnovel.length&suffix=%20Chapters&style=flat-square&label=LOTM) \
 ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2FBittu5134%2FLOTM-Reader%2Fraw%2Frefs%2Fheads%2Fmain%2Fwebsite%2Fsrc%2Flib%2Fmeta.json&query=%24.coi.webnovel.length&suffix=%20Chapters&style=flat-square&label=COI&color=e87952) \
-[![Authors IMDB](https://img.shields.io/badge/Author%20Cuttlefish%20That%20Loves%20Diving-gold?style=for-the-badge&logo=imdb&logoColor=000)](https://www.imdb.com/name/nm15128994/)
 
 Learn more about the author, **Cuttlefish That Loves Diving**:
 

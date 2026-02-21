@@ -60,7 +60,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.tag.outputs.date }}
-          name: Release ${{ steps.tag.outputs.date }}
+          name: EPUB v${{ steps.tag.outputs.date }}
           draft: false
           prerelease: false
           files: |

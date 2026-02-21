@@ -16,9 +16,8 @@
           description:
             "The complete, polished official translation with community edits. Recommended for first-time readers.",
           downloads: {
-            // Example: https://github.com/YourUser/YourRepo/releases/download/v1.0/lotm.epub
-            standard: "https://github.com/Bittu5134/LOTM-Reader/releases/download/v1.0/lotm_webnovel_standard.epub",
-            legacy: "https://github.com/Bittu5134/LOTM-Reader/releases/download/v1.0/lotm_webnovel_legacy.epub",
+            standard: "https://github.com/Bittu5134/LOTM-Reader/releases/latest/download/Lord.of.the.Mysteries.-.Webnovel.Default.epub",
+            legacy: "https://github.com/Bittu5134/LOTM-Reader/releases/latest/download/Lord.of.the.Mysteries.-.Webnovel.Legacy.epub",
           },
         },
         {
@@ -27,8 +26,8 @@
           description:
             "The original translation iteration. Kept for archival purposes.",
           downloads: {
-            standard: "https://github.com/Bittu5134/LOTM-Reader/releases/download/v1.0/lotm_old_standard.epub",
-            legacy: "https://github.com/Bittu5134/LOTM-Reader/releases/download/v1.0/lotm_old_legacy.epub",
+            standard: "https://github.com/Bittu5134/LOTM-Reader/releases/latest/download/Lord.of.the.Mysteries.-.OldTL.Default.epub",
+            legacy: "https://github.com/Bittu5134/LOTM-Reader/releases/latest/download/Lord.of.the.Mysteries.-.OldTL.Legacy.epub",
           },
         },
       ],
@@ -43,8 +42,8 @@
           translator: "CKTalon",
           description: "The ongoing sequel to Lord of the Mysteries.",
           downloads: {
-            standard: "https://github.com/Bittu5134/LOTM-Reader/releases/download/v1.0/coi_webnovel_standard.epub",
-            legacy: "https://github.com/Bittu5134/LOTM-Reader/releases/download/v1.0/coi_webnovel_legacy.epub",
+            standard: "https://github.com/Bittu5134/LOTM-Reader/releases/latest/download/Circle.of.Inevitability.-.Webnovel.Default.epub",
+            legacy: "https://github.com/Bittu5134/LOTM-Reader/releases/latest/download/Circle.of.Inevitability.-.Webnovel.Legacy.epub",
           },
         },
       ],
