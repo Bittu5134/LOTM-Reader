@@ -42,12 +42,12 @@ jobs:
       # 6. Run your Image Manipulator Script
       #    This creates ./images_default and ./images_legacy
       - name: Process Images
-        run: python scripts/images.py
+        run: python scripts/epub_images.py
 
       # 7. Run your EPUB Builder Script
       #    This reads the processed images and creates .epub files in ./epub
       - name: Build EPUBs
-        run: python scripts/epub.py
+        run: python scripts/build_epub.py
 
       # 8. Generate a unique tag for the release (e.g., v2024.03.15)
       - name: Generate Release Tag
