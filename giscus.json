@@ -1,0 +1,5 @@
+{
+  "defaultCommentOrder": "newest",
+  "origins": ["https://orv.pages.dev", "https://beyonder.pages.dev"],
+  "originsRegex": ["http://localhost:[0-9]+"]
+}
