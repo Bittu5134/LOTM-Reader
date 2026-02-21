@@ -69,12 +69,10 @@ jobs:
 
       # 11. Deploy to Cloudflare Pages
       #     Deploys the 'website/build' folder (Standard output for adapter-static)
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: beyonder 
-          directory: website/build
+          command: pages deploy . --project-name=beyonder
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          wranglerVersion: '3'
