@@ -37,8 +37,8 @@ jobs:
         run: choco install pandoc --no-progress
 
       # 5. Install ImageMagick (Required for 'magick' command)
-      - name: Install ImageMagick
-        run: choco install imagemagick --no-progress
+      # - name: Install ImageMagick
+      #   run: choco install imagemagick --no-progress
       
       # 6. convert images to webp
       # - name: Process Images
@@ -77,3 +77,4 @@ jobs:
           projectName: beyonder 
           directory: website/build
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: '3'
