@@ -37,12 +37,12 @@ jobs:
         run: choco install pandoc --no-progress
 
       # 5. Install ImageMagick (Required for 'magick' command)
-      # - name: Install ImageMagick
-      #   run: choco install imagemagick --no-progress
+      - name: Install ImageMagick
+        run: choco install imagemagick --no-progress
       
       # 6. convert images to webp
-      # - name: Process Images
-      #   run: python scripts/images_web.py
+      - name: Process Images
+        run: python scripts/images_web.py
         
       # 7. Run HTML Builder Script
       - name: Generate Svelte Pages

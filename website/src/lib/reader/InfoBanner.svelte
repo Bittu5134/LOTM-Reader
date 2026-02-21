@@ -9,12 +9,13 @@
   let rulesModal: HTMLDialogElement;
 
   const BANNERS = [
-    { id: "discord", weight: 1 },
+    { id: "discord", weight: 3 },
     { id: "github", weight: 1 },
     { id: "donate", weight: 2 },
     { id: "keybinds", weight: 1 },
     { id: "formatting", weight: 1 },
-    { id: "download", weight: 1 },
+    { id: "download", weight: 2 },
+    { id: "orv", weight: 1 },
     { id: "none", weight: 0 },
   ];
 
@@ -54,6 +55,8 @@ $effect(() => {
         {@render formattingBanner()}
       {:else if activeId === "download"}
         {@render downloadBanner()}
+      {:else if activeId === "orv"}
+        {@render orvBanner()}
       {:else if activeId === "none"}
         <br />
       {/if}
@@ -340,3 +343,30 @@ $effect(() => {
   </div>
   <form method="dialog" class="modal-backdrop"><button>close</button></form>
 </dialog>
+
+{#snippet orvBanner()}
+  <div
+    class="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6"
+  >
+    <div class="text-center md:text-left">
+      <p
+        class="text-base font-bold flex items-center justify-center md:justify-start gap-2"
+      >
+        <Icon icon="mdi:star-four-points" class="text-sky-400 size-5" />
+        Want a change of pace?
+      </p>
+      <p class="text-sm opacity-70 mt-1">
+        Start your next journey with <b>Omniscient Reader's Viewpoint</b>. 
+        Read it now on the sister site: <b>orv.pages.dev</b>.
+      </p>
+    </div>
+    <a
+      href="https://orv.pages.dev" 
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn btn-sm bg-sky-600 hover:bg-sky-700 text-white border-0 min-w-30"
+    >
+      Read ORV
+    </a>
+  </div>
+{/snippet}
