@@ -30,7 +30,7 @@ jobs:
       # 3. Install Python Dependencies
       - name: Install Python dependencies
         run: |
-          pip install python-frontmatter
+          pip install python-frontmatter imagesize
 
       # 4. Install Pandoc (Required by html.py)
       - name: Install Pandoc
@@ -41,8 +41,8 @@ jobs:
         run: choco install imagemagick --no-progress
       
       # 6. convert images to webp
-      - name: Process Images
-        run: python scripts/images_web.py
+      # - name: Process Images
+      #   run: python scripts/images_web.py
         
       # 7. Run HTML Builder Script
       - name: Generate Svelte Pages
