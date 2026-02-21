@@ -236,6 +236,13 @@
   }
 </script>
 
+<svelte:head>
+  <title>{bookSlug.toUpperCase()} {readerState.ch_meta.slug} — {readerState.ch_meta.title}</title>
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="{bookSlug.toUpperCase()} {readerState.ch_meta.slug} — {readerState.ch_meta.title}" />
+  <meta name="twitter:title" content="{bookSlug.toUpperCase()} {readerState.ch_meta.slug} — {readerState.ch_meta.title}" />
+</svelte:head>
+
 <svelte:window onkeydown={handleKeydown} />
 
 <div

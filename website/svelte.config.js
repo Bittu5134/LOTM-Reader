@@ -12,12 +12,12 @@ const config = {
       pages: "build",
       assets: "build",
       fallback: "404.html",
-      precompress: true,
+      precompress: false,
       strict: true,
     }),
 
     prerender: {
-      concurrency: 5,
+      concurrency: 1,
       crawl: true,
       handleHttpError: "warn",
     },

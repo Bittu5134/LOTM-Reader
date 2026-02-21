@@ -34,16 +34,17 @@ jobs:
       - name: Install Pandoc
         run: choco install pandoc --no-progress
 
-      # 6. Copy Images to SvelteKit Lib Folder
-      #    Copies from /images to /website/src/lib/images so components can import them
-      - name: Move Images to Lib
-        run: |
-          xcopy /E /I /Y images website\src\lib\images
-
+      # 5. Install ImageMagick (Required for 'magick' command)
+      - name: Install ImageMagick
+        run: choco install imagemagick --no-progress
+      
+      # 6. convert images to webp
+      - name: Process Images
+        run: python scripts/images_web.py
+        
       # 7. Run HTML Builder Script
-      #    This generates +page.svelte files and meta.json
       - name: Generate Svelte Pages
-        run: python scripts/html.py
+        run: python scripts/build_web.py
 
       # 8. Setup Node.js
       - name: Set up Node.js
@@ -62,8 +63,6 @@ jobs:
       #     Includes NODE_OPTIONS memory fix to prevent crashing on thousands of pages
       - name: Build Website
         working-directory: ./website
-        env:
-          NODE_OPTIONS: "--max-old-space-size=7000"
         run: npm run build
 
       # 11. Deploy to Cloudflare Pages
@@ -73,6 +72,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: beyonder  # <--- REPLACE THIS WITH YOUR CLOUDFLARE PROJECT NAME
+          projectName: beyonder 
           directory: website/build
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}

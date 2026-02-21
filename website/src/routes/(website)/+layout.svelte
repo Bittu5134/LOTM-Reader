@@ -1,10 +1,10 @@
 <script lang="ts">
-  import favicon from "$lib/assets/favicon.svg";
   import imgBG from "$lib/assets/web-bg.jpg?enhanced";
   import Icon from "@iconify/svelte";
   import "../../app.css";
   import { page } from "$app/state";
   import { goto } from "$app/navigation";
+  import imgMeta from "$lib/assets/web-the-fool.jpg?url";
 
   let { children } = $props();
 
@@ -24,7 +24,26 @@
 </script>
 
 <svelte:head>
-  <link rel="icon" href={favicon} />
+  <title>LOTM-Reader</title>
+  <meta
+    name="description"
+    content="The Fool that doesn’t belong to this era, the mysterious ruler above the gray fog..."
+  />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="LOTM-Reader" />
+  <meta
+    property="og:description"
+    content="The Fool that doesn’t belong to this era, the mysterious ruler above the gray fog; the King of Yellow and Black who wields good luck…"
+  />
+  <meta property="og:image" content="http://beyonder.pages.dev{imgMeta}" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="LOTM-Reader" />
+  <meta
+    name="twitter:description"
+    content="The Fool that doesn’t belong to this era, the mysterious ruler above the gray fog; the King of Yellow and Black who wields good luck…"
+  />
+  <meta name="twitter:image" content="http://beyonder.pages.dev{imgMeta}" />
 </svelte:head>
 
 <div class="fixed inset-0 -z-10 overflow-hidden">

@@ -5,11 +5,9 @@ images_legacy
 misc/_misc
 misc/_misc2
 misc/discussions1.py
-website/src/routes/(reader)/read/lotm/webnovel
-website/src/routes/(reader)/read/lotm/oldtl
-website/src/routes/(reader)/read/coi/webnovel
+website/src/routes/(reader)/read/**
 epub
-website/src/lib/images/**
+website/static/assets/images/**
 
 
 # Logs

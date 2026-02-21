@@ -6,5 +6,6 @@ export const readerState = $state({
     index: 0,
     section: "",
     discussion: 0,
+    description: ""
   },
 });

@@ -44,7 +44,7 @@ Learn more about the author, **Cuttlefish That Loves Diving**:
 
 We welcome contributions from the community! Whether it's fixing typos, improving formatting, or adding new features.
 
-- [**Contribution Guide**](./CONTRIBUTING.md).
+- [**Contribution Guide**](./contributing.md).
 
 Have questions? Join our [Discord Server](https://discord.gg/XmzJVsyuTQ).
 
@@ -102,8 +102,8 @@ The content is sourced from fan translations and online communities, including:
 
 Support the creator, **Cuttlefish That Loves Diving**, by purchasing official releases through the links above.
 
-* **[View Full License & Credits](./LICENSE.md)** - Includes art credits and DMCA info.
-* **[Source Code License](./LICENSE.md#website-code-license)** - MIT License for the website engine.
+* **[View Full License & Credits](./license.md)** - Includes art credits and DMCA info.
+* **[Source Code License](./license.md#-website-code-license)** - MIT License for the website engine.
 
 For any inquiries, reach out via email at <a href="mailto: ssr7a5134@gmail.com">ssr7a5134@gmail.com</a>.
 

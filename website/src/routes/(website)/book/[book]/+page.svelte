@@ -87,6 +87,27 @@
   }
 </script>
 
+<svelte:head>
+  <title>{book.title}</title>
+  <meta
+    name="description"
+    content={book.synopsis}
+  />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="LOTM-Reader" />
+  <meta
+    property="og:description"
+    content={book.synopsis}
+  />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={book.title} />
+  <meta
+    name="twitter:description"
+    content={book.synopsis}
+  />
+</svelte:head>
+
 <main class="flex md:flex-row flex-col min-h-screen">
   <aside
     class="md:h-dvh md:w-[35vw] w-screen bg-base-200/50 md:sticky md:top-0 flex flex-col items-center border-b md:border-b-0 md:border-r border-base-300"

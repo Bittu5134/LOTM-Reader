@@ -1,12 +1,7 @@
 <script>
-  import favicon from "$lib/assets/favicon.svg";
   import imgBG from "$lib/assets/web-bg.jpg?enhanced&w=9999";
   import "../app.css";
 </script>
-
-<svelte:head>
-  <link rel="icon" href={favicon} />
-</svelte:head>
 
 <div class="fixed inset-0 -z-10 overflow-hidden">
   <enhanced:img 

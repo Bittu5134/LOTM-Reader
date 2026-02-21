@@ -1,14 +1,18 @@
 <script>
 // [IMG_IMPORT]
-
+import css from "../../../../reader.css?url"
 import { readerState } from "$lib/reader.svelte.ts";
 // [METADATA]
 readerState.ch_meta = ch_meta;
 </script>
 
+<svelte:head>
+  <link rel="stylesheet" href={css} />
+</svelte:head>
+
 <style>
 
-  img {
+  /* img {
     border-radius: 0.5em;
     max-height: 85vh;
     width: auto;
@@ -51,7 +55,7 @@ readerState.ch_meta = ch_meta;
     height: 3px;
     background-color: currentColor; 
     border-radius: 2px;
-  }
+  } */
 </style>
 
 <!-- [DATA] -->
