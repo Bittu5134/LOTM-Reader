@@ -43,12 +43,17 @@ jobs:
       #    This creates ./images_default and ./images_legacy
       - name: Process Images
         run: python scripts/images_epub.py
+        env:
+          PYTHONUTF8: 1
+          PYTHONIOENCODING: utf-8
 
       # 7. Run your EPUB Builder Script
       #    This reads the processed images and creates .epub files in ./epub
       - name: Build EPUBs
         run: python scripts/build_epub.py
-
+        env:
+          PYTHONUTF8: 1
+          PYTHONIOENCODING: utf-8
       # 8. Generate a unique tag for the release (e.g., v2024.03.15)
       - name: Generate Release Tag
         id: tag
