@@ -19,7 +19,7 @@
 **Lord of the Mysteries (LOTM)** is a masterpiece of steampunk, fantasy, and eldritch horror following Zhou Mingrui, who transmigrates into the body of Klein Moretti in a Victorian-era world filled with machinery, cannons, and Beyonders. The series includes:
 
 ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2FBittu5134%2FLOTM-Reader%2Fraw%2Frefs%2Fheads%2Fmain%2Fwebsite%2Fsrc%2Flib%2Fmeta.json&query=%24.lotm.webnovel.length&suffix=%20Chapters&style=flat-square&label=LOTM) \
-![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2FBittu5134%2FLOTM-Reader%2Fraw%2Frefs%2Fheads%2Fmain%2Fwebsite%2Fsrc%2Flib%2Fmeta.json&query=%24.coi.webnovel.length&suffix=%20Chapters&style=flat-square&label=COI&color=e87952) \
+![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2FBittu5134%2FLOTM-Reader%2Fraw%2Frefs%2Fheads%2Fmain%2Fwebsite%2Fsrc%2Flib%2Fmeta.json&query=%24.coi.webnovel.length&suffix=%20Chapters&style=flat-square&label=COI&color=e87952) 
 
 Learn more about the author, **Cuttlefish That Loves Diving**:
 
