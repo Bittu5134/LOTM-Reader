@@ -1,6 +1,6 @@
 <script lang="ts">
   import "../../app.css";
-  import { onMount, onDestroy } from "svelte";
+  import { onMount, onDestroy, tick } from "svelte";
   import { browser } from "$app/environment";
   import { page } from "$app/state";
   import { goto, afterNavigate } from "$app/navigation";
@@ -143,9 +143,27 @@
     navState.selectedTL = currentTL;
   });
 
+  function readerPathId(url: URL): string | null {
+    const p = url.pathname.replace(/\/$/, "").split("/").filter(Boolean);
+    if (p[0] !== "read" || p.length < 4) return null;
+    return `${p[1]}/${p[2]}/${p[3]}`;
+  }
+
+  async function scrollReaderToTop() {
+    await tick();
+
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "auto",
+      });
+    });
+  }
+
   // --- Handlers ---
 
-  afterNavigate(async () => {
+  afterNavigate(async ({ from, to }) => {
     const { littlefoot } = await import("littlefoot");
     littlefoot({
       activateOnHover: true,
@@ -153,6 +171,15 @@
       dismissOnUnhover: true,
       buttonTemplate: `<button aria-label="Footnote <% number %>" class="relative btn btn-xs btn-info px-3 py-2 h-3 text-sm mx-1 font-mono"><% number %></button>`,
     });
+
+    if (!browser || !from || !to) return;
+
+    const prevId = readerPathId(from.url);
+    const nextId = readerPathId(to.url);
+    // When loading a new chapter ensure reader scrolls to top of page
+    if (prevId && nextId && prevId !== nextId) {
+      await scrollReaderToTop();
+    }
   });
   onMount(async () => {
     if (browser) {
