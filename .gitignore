@@ -9,6 +9,7 @@ scripts/misc/discussions1.py
 website/src/routes/(reader)/read/**
 epub
 website/static/assets/images/**
+sample
 
 
 # Logs

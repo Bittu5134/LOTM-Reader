@@ -119,22 +119,201 @@
   let mainContainer: HTMLDivElement;
   let navbarRef: any;
 
+  // --- Giscus Lazy Loading & Error Mitigation State ---
+  let giscusLoggedIn = $state<boolean>(
+    browser ? localStorage.getItem("giscusLoggedIn") === "true" : false,
+  );
+  let commentsOpen = $state<boolean>(false);
+  let commentCount = $state<number | null>(null);
+  let giscusStatus = $state<"idle" | "loading" | "success" | "error">("idle");
+  let giscusTimeoutId: any = null;
+
+  function revealComments() {
+    commentsOpen = true;
+    giscusStatus = "loading";
+    startGiscusTimeout();
+  }
+
+  function startGiscusTimeout() {
+    if (giscusTimeoutId) clearTimeout(giscusTimeoutId);
+    giscusTimeoutId = setTimeout(() => {
+      if (giscusStatus === "loading") {
+        console.warn(`[Giscus] Timeout check for discussion ${githubID}`);
+        // Only set error if still in loading state after 12s without any Giscus message
+        giscusStatus = "error";
+      }
+    }, 12000);
+  }
+
+  async function fetchCommentCount(id: number) {
+    if (!id || id <= 0) return;
+    try {
+      const res = await fetch(
+        `https://api.github.com/repos/bittu5134/lotm-reader/discussions/${id}`
+      );
+      if (!res.ok) return;
+      const data = await res.json();
+      if (typeof data.comments === "number" && data.comments > 0) {
+        commentCount = data.comments;
+      } else {
+        commentCount = 0;
+      }
+    } catch (err) {
+      console.warn("[Giscus] Failed to fetch comments count:", err);
+    }
+  }
+
+  // Listen for Giscus postMessages and custom events
+  $effect(() => {
+    if (!browser) return;
+
+    const handleMessage = (event: MessageEvent) => {
+      if (event.origin !== "https://giscus.app") return;
+      const giscusData = event.data?.giscus;
+      if (!giscusData) return;
+
+      if ("error" in giscusData) {
+        console.warn("[Giscus] Error reported:", giscusData.error);
+        giscusStatus = "error";
+        giscusLoggedIn = false;
+        localStorage.setItem("giscusLoggedIn", "false");
+        if (giscusTimeoutId) {
+          clearTimeout(giscusTimeoutId);
+          giscusTimeoutId = null;
+        }
+      } else {
+        // Any non-error message from giscus.app (viewer, discussion, resize, etc.) confirms comments loaded
+        giscusStatus = "success";
+        if (giscusTimeoutId) {
+          clearTimeout(giscusTimeoutId);
+          giscusTimeoutId = null;
+        }
+
+        if ("viewer" in giscusData) {
+          const username = giscusData.viewer?.login;
+          const isLoggedIn =
+            typeof username === "string" &&
+            username.trim() !== "" &&
+            username !== "null" &&
+            username !== "undefined" &&
+            username !== "giscus[bot]";
+
+          giscusLoggedIn = isLoggedIn;
+          localStorage.setItem("giscusLoggedIn", String(isLoggedIn));
+        }
+      }
+    };
+
+    const handleOpenComments = () => {
+      if (!commentsOpen) {
+        revealComments();
+      }
+    };
+
+    const handleLinkClick = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest("a");
+      if (target && target.getAttribute("href") === "#comments") {
+        if (!commentsOpen) {
+          revealComments();
+        }
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    window.addEventListener("open-comments", handleOpenComments);
+    window.addEventListener("click", handleLinkClick);
+
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      window.removeEventListener("open-comments", handleOpenComments);
+      window.removeEventListener("click", handleLinkClick);
+    };
+  });
+
+  // Watch for navigation/chapter changes to decide auto-open vs lazy load button
+  $effect(() => {
+    if (!prefs.config.showComments) return;
+
+    const id = githubID;
+    const slug = bookSlug;
+
+    if (browser) {
+      const urlParams = page.url.searchParams;
+      const hasCommentsParam = urlParams.has("comments");
+      const hasGiscusParam = urlParams.has("giscus");
+      const hasCodeParam = urlParams.has("code");
+      const isHashComments = page.url.hash === "#comments";
+
+      const storedLogin = localStorage.getItem("giscusLoggedIn") === "true";
+      giscusLoggedIn = storedLogin;
+
+      const forceOpen =
+        storedLogin ||
+        hasCommentsParam ||
+        hasGiscusParam ||
+        hasCodeParam ||
+        isHashComments;
+
+      if (forceOpen) {
+        commentsOpen = true;
+        giscusStatus = "loading";
+
+        // Remove ?comments=1 parameter immediately from address bar to keep URL clean
+        if (hasCommentsParam) {
+          urlParams.delete("comments");
+          const newSearch = urlParams.toString();
+          const newUrl =
+            window.location.pathname +
+            (newSearch ? "?" + newSearch : "") +
+            window.location.hash;
+          window.history.replaceState({}, "", newUrl);
+        }
+
+        startGiscusTimeout();
+      } else {
+        commentsOpen = false;
+        giscusStatus = "idle";
+        commentCount = null;
+        fetchCommentCount(id);
+      }
+    }
+
+    return () => {
+      if (giscusTimeoutId) {
+        clearTimeout(giscusTimeoutId);
+        giscusTimeoutId = null;
+      }
+    };
+  });
+
   // 1. Parse URL manually (since page.params is empty)
-  // Split path, filter out empty strings to handle trailing slashes
-  // URL: /read/coi/webnovel/1 -> ["read", "coi", "webnovel", "1"]
   const pathSegments = $derived(page.url.pathname.split("/").filter(Boolean));
 
   // 2. Derive values from URL position
   const bookSlug = $derived(pathSegments[1] ?? "lotm");
   const currentTL = $derived(pathSegments[2] ?? "webnovel");
   const currentChapter = $derived(Number(pathSegments[3]) || 1);
-  let githubID = $derived(readerState.ch_meta.discussion || 1);
+
+  // Derive chapter metadata directly from meta.json based on URL (ensuring SSR & crawler accuracy)
+  const currentChapterMeta = $derived.by(() => {
+    const chapters = (bookData as any)[bookSlug]?.[currentTL];
+    if (!Array.isArray(chapters)) return null;
+
+    const idx = currentChapter - 1;
+    if (chapters[idx] && Number(chapters[idx].slug) === currentChapter) {
+      return chapters[idx];
+    }
+    return chapters.find((ch: any) => Number(ch.slug) === currentChapter) || chapters[idx] || null;
+  });
+
+  const chapterSlug = $derived(currentChapterMeta?.slug ?? readerState.ch_meta.slug ?? currentChapter);
+  const chapterTitle = $derived(currentChapterMeta?.title || readerState.ch_meta.title || "");
+  const githubID = $derived(currentChapterMeta?.discussion || readerState.ch_meta.discussion || 1);
 
   // 3. Get Total Chapters for the current TL
   const totalChapters = $derived(
-    bookData[bookSlug][currentTL].length
+    (bookData as any)[bookSlug]?.[currentTL]?.length ?? 1
   );
-
 
   let navState = $state({ searchQuery: "", selectedTL: "webnovel" });
 
@@ -181,9 +360,10 @@
       await scrollReaderToTop();
     }
   });
+
   onMount(async () => {
     if (browser) {
-      const lastRead = JSON.parse(localStorage.getItem("lastRead") || "{} ");
+      const lastRead = JSON.parse(localStorage.getItem("lastRead") || "{}");
       // Check if saved position matches current URL
       if (lastRead.slug == currentChapter && lastRead.book === bookSlug) {
         window.scrollTo({ top: lastRead.scroll, behavior: "instant" });
@@ -239,6 +419,9 @@
         navbarRef?.openSettings();
         break;
       case "c":
+        if (!commentsOpen) {
+          revealComments();
+        }
         document
           .getElementById("comments")
           ?.scrollIntoView({ behavior: "smooth" });
@@ -248,15 +431,15 @@
         break;
       case "n":
       case "arrowright":
-         // Check if it's the last chapter before navigating
-         if (slug < totalChapters) {
-            goto(`/read/${bookSlug}/${currentTL}/${slug + 1}`);
-         }
+        // Check if it's the last chapter before navigating
+        if (slug < totalChapters) {
+          goto(`/read/${bookSlug}/${currentTL}/${slug + 1}${commentsOpen ? '?comments=1' : ''}`);
+        }
         break;
       case "p":
       case "arrowleft":
         if (slug > 1) {
-            goto(`/read/${bookSlug}/${currentTL}/${slug - 1}`);
+          goto(`/read/${bookSlug}/${currentTL}/${slug - 1}${commentsOpen ? '?comments=1' : ''}`);
         }
         break;
     }
@@ -264,10 +447,15 @@
 </script>
 
 <svelte:head>
-  <title>{bookSlug.toUpperCase()} {readerState.ch_meta.slug} — {readerState.ch_meta.title}</title>
+  <title>{bookSlug.toUpperCase()} {chapterSlug}{chapterTitle ? ` — ${chapterTitle}` : ""}</title>
+  <meta name="description" content={`Read ${bookSlug.toUpperCase()} Chapter ${chapterSlug}${chapterTitle ? `: ${chapterTitle}` : ""} online.`} />
   <meta property="og:type" content="article" />
-  <meta property="og:title" content="{bookSlug.toUpperCase()} {readerState.ch_meta.slug} — {readerState.ch_meta.title}" />
-  <meta name="twitter:title" content="{bookSlug.toUpperCase()} {readerState.ch_meta.slug} — {readerState.ch_meta.title}" />
+  <meta property="og:site_name" content="LOTM Reader" />
+  <meta property="og:title" content="{bookSlug.toUpperCase()} {chapterSlug}{chapterTitle ? ` — ${chapterTitle}` : ""}" />
+  <meta property="og:description" content={`Read ${bookSlug.toUpperCase()} Chapter ${chapterSlug}${chapterTitle ? `: ${chapterTitle}` : ""} online.`} />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="{bookSlug.toUpperCase()} {chapterSlug}{chapterTitle ? ` — ${chapterTitle}` : ""}" />
+  <meta name="twitter:description" content={`Read ${bookSlug.toUpperCase()} Chapter ${chapterSlug}${chapterTitle ? `: ${chapterTitle}` : ""} online.`} />
 </svelte:head>
 
 <svelte:window onkeydown={handleKeydown} />
@@ -304,23 +492,22 @@
       <a
         href={currentChapter <= 1 
             ? `/book/${bookSlug}` 
-            : `/read/${bookSlug}/${navState.selectedTL}/${currentChapter - 1}`}
+            : `/read/${bookSlug}/${navState.selectedTL}/${currentChapter - 1}${commentsOpen ? '?comments=1' : ''}`}
         class="btn btn-soft btn-sm gap-2"
         aria-label={currentChapter <= 1 ? "Go Home" : "Previous Chapter"}
-
       >
         <Icon icon={currentChapter <= 1 ? "iconamoon:home-light" : "mage:previous"} class="size-5" />
         <span class="hidden sm:inline">{currentChapter <= 1 ? "Home" : "Prev"}</span>
       </a>
 
       <span class="text-xs font-mono font-bold opacity-50 tracking-wider">
-        CH. {readerState.ch_meta.slug}
+        CH. {chapterSlug}
       </span>
 
       <a
         href={currentChapter >= totalChapters
             ? `/book/${bookSlug}`
-            : `/read/${bookSlug}/${navState.selectedTL}/${currentChapter + 1}`}
+            : `/read/${bookSlug}/${navState.selectedTL}/${currentChapter + 1}${commentsOpen ? '?comments=1' : ''}`}
         class="btn btn-soft btn-sm gap-2"
         aria-label={currentChapter >= totalChapters ? "Go Home" : "Next Chapter"}
         data-sveltekit-preload-data="viewport"
@@ -336,23 +523,113 @@
   {/if}
 
   {#if prefs.config.showComments}
-  <div id="comments" class="sm:mx-auto mx-0 max-w-5xl sm:px-6 px-3 pb-6 scroll-mt-20">
-    <Giscus
-      id="comments"
-      repo="bittu5134/lotm-reader"
-      repoId="R_kgDORObHsw"
-      category={bookSlug.toUpperCase()}
-      categoryId={bookSlug === "LOTM"
-        ? "DIC_kwDORObHs84C2RKd"
-        : "DIC_kwDORObHs84C2RKe"}
-      mapping="number"
-      term={String(githubID)}
-      reactionsEnabled="1"
-      emitMetadata="0"
-      inputPosition="top"
-      theme={getGiscusTheme(prefs.config.theme)}
-      lang="en"
-    />
+  <div id="comments" class="sm:mx-auto mx-0 max-w-4xl sm:px-6 px-3 pb-8 scroll-mt-20">
+    {#if !commentsOpen}
+      <div id="show-discussion-container" class="my-6 text-center max-w-xl mx-auto px-2">
+        <button
+          id="show-discussion-btn"
+          onclick={() => revealComments()}
+          class="w-full sm:w-auto min-w-[280px] min-h-[56px] py-4 px-8 btn btn-primary rounded-xl font-bold text-base md:text-lg shadow-md hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-3 mx-auto cursor-pointer"
+        >
+          <Icon icon="iconamoon:comment-bold" class="size-6" />
+          <span>
+            {commentCount !== null && commentCount > 0
+              ? `Show Comments (${commentCount})`
+              : "Show Comments"}
+          </span>
+        </button>
+      </div>
+    {:else}
+      {#if giscusStatus === "error"}
+        <div class="card bg-warning/10 border-2 border-warning/40 text-base-content shadow-xl p-6 md:p-8 rounded-2xl my-6 max-w-2xl mx-auto text-center flex flex-col items-center justify-center gap-4 transition-all duration-200">
+          <div class="p-3 bg-warning/20 text-warning rounded-full">
+            <Icon icon="heroicons:exclamation-triangle-solid" class="size-9" />
+          </div>
+          <div class="space-y-2 max-w-lg mx-auto text-center">
+            <h3 class="text-xl md:text-2xl font-bold text-warning tracking-wide">
+              Comments Rate Limit Exceeded
+            </h3>
+            <p class="text-sm md:text-base opacity-90 leading-relaxed font-medium">
+              GitHub Giscus rate limit has been reached for anonymous requests. Log in with your GitHub account to use your personal quota, or open the discussion page directly:
+            </p>
+          </div>
+          <div class="mt-2 flex flex-col sm:flex-row flex-wrap gap-3 justify-center items-center w-full max-w-md mx-auto">
+            <a
+              href={`https://giscus.app/api/oauth/authorize?redirect_uri=${encodeURIComponent(
+                browser ? window.location.href : ""
+              )}#comments`}
+              class="w-full sm:w-auto min-h-[52px] py-3.5 px-6 btn btn-warning rounded-xl text-base font-bold flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] active:scale-95 transition-all"
+            >
+              <Icon icon="material-symbols:login-rounded" class="size-5" />
+              <span>Log In to View Comments</span>
+            </a>
+            <a
+              href={`https://github.com/bittu5134/lotm-reader/discussions/${githubID}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="w-full sm:w-auto min-h-[52px] py-3.5 px-6 btn btn-outline btn-warning rounded-xl text-base font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all"
+            >
+              <Icon icon="material-symbols:open-in-new" class="size-5" />
+              <span>Open Discussion Page</span>
+            </a>
+          </div>
+        </div>
+      {:else if !giscusLoggedIn}
+        <div class="card bg-base-200/80 border border-primary/20 text-base-content shadow-sm p-4 md:p-5 rounded-2xl mb-6 max-w-2xl mx-auto text-center flex flex-col sm:flex-row items-center justify-between gap-4 transition-all duration-200">
+          <div class="flex items-center gap-3 text-left">
+            <div class="p-2.5 bg-primary/10 text-primary rounded-xl flex-shrink-0">
+              <Icon icon="iconamoon:info-circle-bold" class="size-6" />
+            </div>
+            <div>
+              <h4 class="text-sm md:text-base font-bold">Having trouble loading comments?</h4>
+              <p class="text-xs md:text-sm opacity-75">Log in via GitHub or open the discussion page directly.</p>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto flex-shrink-0">
+            <a
+              href={`https://giscus.app/api/oauth/authorize?redirect_uri=${encodeURIComponent(
+                browser ? window.location.href : ""
+              )}#comments`}
+              class="min-h-[48px] py-3 px-5 btn btn-primary rounded-xl text-xs md:text-sm font-bold flex items-center justify-center gap-1.5 shadow-sm hover:scale-[1.02] active:scale-95 transition-all"
+            >
+              <Icon icon="material-symbols:login-rounded" class="size-5" />
+              <span>Log In</span>
+            </a>
+            <a
+              href={`https://github.com/bittu5134/lotm-reader/discussions/${githubID}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="min-h-[48px] py-3 px-5 btn btn-outline btn-primary rounded-xl text-xs md:text-sm font-bold flex items-center justify-center gap-1.5 hover:scale-[1.02] active:scale-95 transition-all"
+            >
+              <Icon icon="material-symbols:open-in-new" class="size-5" />
+              <span>Open Discussion</span>
+            </a>
+          </div>
+        </div>
+      {/if}
+
+      {#if giscusStatus !== "error"}
+        <div>
+          <Giscus
+            id="comments-giscus"
+            repo="bittu5134/lotm-reader"
+            repoId="R_kgDORObHsw"
+            category={bookSlug.toUpperCase()}
+            categoryId={bookSlug === "LOTM"
+              ? "DIC_kwDORObHs84C2RKd"
+              : "DIC_kwDORObHs84C2RKe"}
+            mapping="number"
+            term={String(githubID)}
+            reactionsEnabled="1"
+            emitMetadata="1"
+            inputPosition="top"
+            theme={getGiscusTheme(prefs.config.theme)}
+            lang="en"
+            loading="lazy"
+          />
+        </div>
+      {/if}
+    {/if}
   </div>
   {/if}
 </div>

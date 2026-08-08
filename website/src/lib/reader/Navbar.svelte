@@ -134,10 +134,14 @@
 
     <div class="tooltip tooltip-bottom" data-tip="Comments (C)">
       <button
-        onclick={() =>
+        onclick={() => {
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent("open-comments"));
+          }
           document
             .getElementById("comments")
-            ?.scrollIntoView({ behavior: "smooth" })}
+            ?.scrollIntoView({ behavior: "smooth" });
+        }}
         class="btn btn-ghost btn-sm btn-square rounded-btn"
       >
         <Icon icon="iconamoon:comment" class="size-6" />
