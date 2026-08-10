@@ -60,7 +60,7 @@
     </div>
     <div class="tooltip tooltip-left" data-tip="Contribute">
       <a
-        href="https://github.com/Bittu5134/ORV-Reader/blob/main/contributing.md"
+        href="https://github.com/Bittu5134/LOTM-Reader/blob/main/contributing.md"
         class="btn btn-soft btn-lg btn-warning"
         ><Icon icon="ri:edit-line" class="size-7" /></a
       >
